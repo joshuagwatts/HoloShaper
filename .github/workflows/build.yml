@@ -1,4 +1,4 @@
-name: Build HoloShaper VST3 (Windows)
+name: Build HoloShaper
 
 on:
   push:
@@ -14,11 +14,25 @@ jobs:
       - name: Configure
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build
+      - name: Build VST3
         run: cmake --build build --config Release --parallel
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\holoshaper.iss
+        shell: pwsh
 
       - name: Upload VST3
         uses: actions/upload-artifact@v4
         with:
           name: HoloShaper-VST3-Windows
           path: build/HoloShaper_artefacts/Release/VST3/
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: HoloShaper-Setup-Windows
+          path: installer/output/*.exe
