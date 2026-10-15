@@ -45,12 +45,12 @@ public:
     std::vector<holoshaper::CurvePin> getCurvePins() const;
     float evaluateCurve(float phase) const;
 
-    float getUiPhase() const  { return uiPhase.load(std::memory_order_relaxed); }
-    float getUiLevel() const  { return uiLevel.load(std::memory_order_relaxed); }
-    float getUiBpm() const    { return uiBpm.load(std::memory_order_relaxed); }
+    float getUiPhase() const  { return uiPhase_.load(std::memory_order_relaxed); }
+    float getUiLevel() const  { return uiLevel_.load(std::memory_order_relaxed); }
+    float getUiBpm() const    { return uiBpm_.load(std::memory_order_relaxed); }
     juce::int64 getTriggerCount() const
     {
-        return triggerCount.load(std::memory_order_relaxed);
+        return triggerCount_.load(std::memory_order_relaxed);
     }
 
     static constexpr double kBeatsPerCycle[4] = { 1.0, 2.0, 4.0, 8.0 };

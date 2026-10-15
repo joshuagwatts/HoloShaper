@@ -39,7 +39,7 @@ HoloShaperProcessor::createParameterLayout()
         "filterType", "Filter",
         juce::StringArray{ "Off", "Lowpass", "Highpass" }, 0));
     juce::NormalisableRange<float> freqRange(40.0f, 8000.0f);
-    freqRange.setSkewForCentre(800.0f, false);
+    freqRange.setSkewForCentre(800.0f);
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         "filterFreq", "Filter Freq", freqRange, 800.0f));
     layout.add(std::make_unique<juce::AudioParameterFloat>(
@@ -121,9 +121,9 @@ void HoloShaperProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     double ppq = -1.0;
     double bpm = 120.0;
     bool playing = false;
-    if (auto* playHead = getPlayHead())
+    if (auto* hostPlayHead = getPlayHead())
     {
-        if (auto pos = playHead->getPosition())
+        if (auto pos = hostPlayHead->getPosition())
         {
             playing = pos->getIsPlaying();
             ppq = pos->getPpqPosition().orFallback(-1.0);
