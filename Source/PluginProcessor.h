@@ -53,7 +53,7 @@ public:
         return triggerCount_.load(std::memory_order_relaxed);
     }
 
-    static constexpr double kBeatsPerCycle[4] = { 1.0, 2.0, 4.0, 8.0 };
+    static constexpr double kBeatsPerCycle[6] = { 0.25, 0.5, 1.0, 2.0, 4.0, 8.0 };
 
 private:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
