@@ -2,7 +2,7 @@
 ; Installs the VST3 bundle to the standard location, cleanly replacing old versions.
 
 #define MyAppName "HoloShaper"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.1.0"
 #define MyAppPublisher "Holowatts"
 
 [Setup]
