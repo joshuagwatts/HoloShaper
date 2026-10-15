@@ -50,7 +50,7 @@ HoloShaperProcessor::createParameterLayout()
         juce::NormalisableRange<float>(1.0f, 200.0f, 0.5f), 10.0f));
     layout.add(std::make_unique<juce::AudioParameterChoice>(
         "mode", "Mode",
-        juce::StringArray{ "Free", "Retrigger" }, 1));
+        juce::StringArray{ "Free", "Retrigger" }, 0));
     layout.add(std::make_unique<juce::AudioParameterChoice>(
         "rate", "Rate",
         juce::StringArray{ "1/4", "1/2", "1/1", "2/1" }, 1));
