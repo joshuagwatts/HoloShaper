@@ -320,7 +320,10 @@ juce::Slider& HoloShaperEditor::addRotary(const juce::String& paramId,
     s->setColour(juce::Slider::textBoxTextColourId, kText);
     s->setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
     sliders_.add(s);
-    parent.addAndMakeVisible(s);
+    // NOTE: controls are direct children of the editor (not of the
+    // GroupComponents) — positioned in editor coordinates in resized().
+    juce::ignoreUnused(parent);
+    addAndMakeVisible(s);
 
     auto* l = new juce::Label();
     l->setText(label, juce::dontSendNotification);
@@ -328,7 +331,7 @@ juce::Slider& HoloShaperEditor::addRotary(const juce::String& paramId,
     l->setFont(juce::Font(11.0f));
     l->setJustificationType(juce::Justification::centred);
     sliderLabels_.add(l);
-    parent.addAndMakeVisible(l);
+    addAndMakeVisible(l);
 
     sliderAttachments_.push_back(
         std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
@@ -345,7 +348,8 @@ juce::ComboBox& HoloShaperEditor::addCombo(const juce::String& paramId,
     c->setColour(juce::ComboBox::backgroundColourId, kPanel);
     c->setColour(juce::ComboBox::textColourId, kText);
     combos_.add(c);
-    parent.addAndMakeVisible(c);
+    juce::ignoreUnused(parent);
+    addAndMakeVisible(c);
 
     comboAttachments_.push_back(
         std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
@@ -369,42 +373,50 @@ void HoloShaperEditor::resized()
     volumeGroup_.setBounds(454, top, 170, h);
     midiGroup_.setBounds(632, top, W - 640, h);
 
+    // NOTE: every knob/combo/label below is a direct child of the editor
+    // (NOT of the GroupComponents) and is positioned in editor coordinates.
+
     // Trigger group: meter + 5 rotaries (sliders 0-4) + 2 combos (0-1)
     {
+        const int gx = triggerGroup_.getX();
+        const int gy = triggerGroup_.getY();
         auto r = triggerGroup_.getLocalBounds().reduced(8);
         r.removeFromTop(14);
-        meter_.setBounds(triggerGroup_.getX() + r.getX(), top + r.getY(),
-                         r.getWidth(), 16);
+        meter_.setBounds(gx + r.getX(), gy + r.getY(), r.getWidth(), 16);
         r.removeFromTop(22);
         const int n = 5;
         int sw = r.getWidth() / n;
         for (int i = 0; i < n && i < sliders_.size(); ++i)
         {
-            int x = r.getX() + i * sw;
-            sliders_[i]->setBounds(x, r.getY(), sw, 64);
-            sliderLabels_[i]->setBounds(x, r.getY() + 62, sw, 14);
+            int x = gx + r.getX() + i * sw;
+            int y = gy + r.getY();
+            sliders_[i]->setBounds(x, y, sw, 64);
+            sliderLabels_[i]->setBounds(x, y + 62, sw, 14);
         }
-        int cy = r.getY() + 84;
+        int cy = gy + r.getY() + 84;
         if (combos_.size() >= 2)
         {
-            combos_[0]->setBounds(r.getX(), cy, r.getWidth() / 2 - 4, 24);
-            combos_[1]->setBounds(r.getX() + r.getWidth() / 2 + 4, cy,
+            combos_[0]->setBounds(gx + r.getX(), cy, r.getWidth() / 2 - 4, 24);
+            combos_[1]->setBounds(gx + r.getX() + r.getWidth() / 2 + 4, cy,
                                  r.getWidth() / 2 - 4, 24);
         }
     }
 
     // Sync group: rate combo (combo 2) + BPM label
     {
+        const int gx = syncGroup_.getX();
+        const int gy = syncGroup_.getY();
         auto r = syncGroup_.getLocalBounds().reduced(8);
         r.removeFromTop(14);
         if (combos_.size() >= 3)
-            combos_[2]->setBounds(r.getX(), r.getY(), r.getWidth(), 24);
-        bpmLabel_.setBounds(syncGroup_.getX() + r.getX(), top + r.getY() + 40,
-                            r.getWidth(), 30);
+            combos_[2]->setBounds(gx + r.getX(), gy + r.getY(), r.getWidth(), 24);
+        bpmLabel_.setBounds(gx + r.getX(), gy + r.getY() + 40, r.getWidth(), 30);
     }
 
     // Volume group: sliders 5-6
     {
+        const int gx = volumeGroup_.getX();
+        const int gy = volumeGroup_.getY();
         auto r = volumeGroup_.getLocalBounds().reduced(8);
         r.removeFromTop(14);
         const int n = 2;
@@ -414,20 +426,22 @@ void HoloShaperEditor::resized()
             int si = 5 + i;
             if (si < sliders_.size())
             {
-                int x = r.getX() + i * sw;
-                sliders_[si]->setBounds(x, r.getY(), sw, 76);
-                sliderLabels_[si]->setBounds(x, r.getY() + 74, sw, 14);
+                int x = gx + r.getX() + i * sw;
+                int y = gy + r.getY();
+                sliders_[si]->setBounds(x, y, sw, 76);
+                sliderLabels_[si]->setBounds(x, y + 74, sw, 14);
             }
         }
     }
 
     // MIDI group: toggle + sliders 7-10
     {
+        const int gx = midiGroup_.getX();
+        const int gy = midiGroup_.getY();
         auto r = midiGroup_.getLocalBounds().reduced(8);
         r.removeFromTop(14);
-        ccEnableButton_.setBounds(midiGroup_.getX() + r.getX(),
-                                 top + r.getY(), r.getWidth(), 24);
-        int ry = r.getY() + 32;
+        ccEnableButton_.setBounds(gx + r.getX(), gy + r.getY(), r.getWidth(), 24);
+        int ry = gy + r.getY() + 32;
         const int n = 4;
         int sw = r.getWidth() / n;
         for (int i = 0; i < n; ++i)
@@ -435,7 +449,7 @@ void HoloShaperEditor::resized()
             int si = 7 + i;
             if (si < sliders_.size())
             {
-                int x = r.getX() + i * sw;
+                int x = gx + r.getX() + i * sw;
                 sliders_[si]->setBounds(x, ry, sw, 76);
                 sliderLabels_[si]->setBounds(x, ry + 74, sw, 14);
             }
