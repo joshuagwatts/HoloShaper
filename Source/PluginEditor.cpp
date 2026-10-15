@@ -288,7 +288,7 @@ HoloShaperEditor::HoloShaperEditor(HoloShaperProcessor& p)
     addCombo("mode",       { "Free", "Retrigger" },          triggerGroup_);
 
     // Sync (combo 2)
-    addCombo("rate", { "1/16", "1/8", "1/4", "1/2", "1/1", "2/1" }, syncGroup_);
+    addCombo("rate", { "1/16", "1/8", "1/4", "1/2", "1/1", "2/1", "4/1", "8/1", "16/1", "32/1" }, syncGroup_);
 
     // Volume (sliders 5-6)
     addRotary("mix",    "Mix",    volumeGroup_);

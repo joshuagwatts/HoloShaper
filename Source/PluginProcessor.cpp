@@ -53,7 +53,7 @@ HoloShaperProcessor::createParameterLayout()
         juce::StringArray{ "Free", "Retrigger" }, 0));
     layout.add(std::make_unique<juce::AudioParameterChoice>(
         "rate", "Rate",
-        juce::StringArray{ "1/16", "1/8", "1/4", "1/2", "1/1", "2/1" }, 2));
+        juce::StringArray{ "1/16", "1/8", "1/4", "1/2", "1/1", "2/1", "4/1", "8/1", "16/1", "32/1" }, 2));
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         "holdoff", "Holdoff",
         juce::NormalisableRange<float>(10.0f, 500.0f, 1.0f), 100.0f));
@@ -101,7 +101,7 @@ void HoloShaperProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     const float threshold = apvts.getRawParameterValue("threshold")->load();
     const float rmsTime   = apvts.getRawParameterValue("rmsTime")->load();
     const int   modeIdx   = (int) apvts.getRawParameterValue("mode")->load();
-    const int   rateIdx   = juce::jlimit(0, 5, (int) apvts.getRawParameterValue("rate")->load());
+    const int   rateIdx   = juce::jlimit(0, 9, (int) apvts.getRawParameterValue("rate")->load());
     const float holdoff   = apvts.getRawParameterValue("holdoff")->load();
     const float mix       = apvts.getRawParameterValue("mix")->load();
     const float amount    = apvts.getRawParameterValue("amount")->load();
